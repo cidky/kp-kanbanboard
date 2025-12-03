@@ -1,0 +1,535 @@
+/* ================================
+   GLOBAL LAYOUT
+================================ */
+
+.board-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: "Inter", sans-serif;
+}
+
+/* Header */
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.board-header h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.board-header button {
+  padding: 10px 18px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.board-header button:hover {
+  background: #dc2626;
+}
+
+/* ================================
+   CREATE TASK FORM
+================================ */
+
+.create-task-box {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  margin-bottom: 40px;
+  max-width: 650px;
+}
+
+.create-task-box h3 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.create-task-box input,
+.create-task-box textarea,
+.create-task-box select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 14px;
+  resize: none;
+  font-size: 14px;
+}
+
+textarea {
+  height: 70px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.progress-input {
+  flex: 1;
+}
+
+.progress-input label {
+  font-size: 14px;
+}
+
+progress-input input[type="range"] {
+  width: 100%;
+}
+
+.add-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+/* ================================
+   COLUMNS LAYOUT
+================================ */
+
+.columns {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.column {
+  flex: 1;
+  padding: 20px;
+  border-radius: 22px;
+  background: #f3f4f6;
+  min-height: 500px;
+}
+
+.column h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Pastel Backgrounds */
+.column.pink {
+  background: #fce7f3;
+}
+
+.column.orange {
+  background: #ffedd5;
+}
+
+.column.purple {
+  background: #ede9fe;
+}
+
+/* ================================
+   TASK CARD
+================================ */
+
+.task-card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: 0.1s ease;
+}
+.task-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Badge priority
+.card-header {
+  margin-bottom: 10px;
+} */
+
+.badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  color: white;
+}
+
+.badge.low {
+  background: #38bdf8; /* sky blue */
+}
+.badge.medium {
+  background: #f59e0b; /* amber */
+}
+.badge.high {
+  background: #ef4444; /* red */
+}
+
+/* Task content */
+.task-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.task-note {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 14px;
+}
+
+/* Progress bar */
+.progress-bar-container {
+  width: 100%;
+  background: #e5e7eb;
+  border-radius: 6px;
+  height: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 6px;
+}
+
+.add-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.progress-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.progress-inline input[type="range"] {
+  flex: 1;
+}
+
+.progress-inline-label {
+  font-size: 0.85rem;
+  min-width: 40px;
+  text-align: right;
+  color: #4b5563;
+}
+
+/* tanggal */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+/* grup judul + tanggal di sebelah kiri */
+.card-title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.task-title {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* tanggal kecil di kanan atas, sejajar dengan judul */
+.task-date {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Footer */
+.task-footer {
+  display: flex;
+  justify-content: space-between; /* kiri = hapus, kanan = edit+status */
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* kiri bawah: hapus */
+.task-footer-left button {
+  border: none;
+  background: #f3f4f6;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.task-footer-left button:hover {
+  background: #e5e7eb;
+}
+
+/* kanan bawah: edit + status */
+.task-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* jarak antara edit dan grup status */
+}
+
+.task-footer-right button,
+.move-buttons button {
+  border: none;
+  background: #f3f4f6;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.task-footer-right button:hover,
+.move-buttons button:hover {
+  background: #e5e7eb;
+}
+
+/* jarak antar ikon status (progress/done) */
+.move-buttons {
+  display: flex;
+  gap: 6px; /* ubah kalau mau lebih renggang */
+}
+
+/* drag & drop */
+.task-card {
+  cursor: grab;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+/* ================================
+   MODAL EDIT
+================================ */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.modal-box {
+  background: white;
+  width: 360px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal-box input,
+.modal-box textarea,
+.modal-box select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 14px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancel-btn {
+  background: #e5e7eb;
+  padding: 8px 20px;
+  border-radius: 10px;
+}
+
+.save-btn {
+  background: #2563eb;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 10px;
+}
+.save-btn:hover {
+  background: #1e40af;
+}
+
+/* EXPORT LAPORAN */
+/* =========================
+   LAPORAN HARIAN
+   ========================= */
+
+.report-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: "Inter", sans-serif;
+  background: #ffffff;
+  color: #111827;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.report-controls .back-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #e5e7eb;
+  color: #111827;
+  cursor: pointer;
+}
+
+.report-controls .back-btn:hover {
+  background: #d1d5db;
+}
+
+.report-header h2 {
+  margin: 0;
+}
+
+.report-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.report-controls .date-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.report-controls input[type="date"] {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.report-controls button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+.report-controls button:hover {
+  background: #1d4ed8;
+}
+
+/* Ringkasan kartu */
+.report-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 140px;
+  background: #f3f4f6;
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.summary-card h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.summary-card p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Tabel laporan */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.report-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* Tombol export di bawah kanan */
+.report-export {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.report-export button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.report-export button:hover {
+  background: #1d4ed8;
+}
+
+@media print {
+  .board-header,
+  .report-controls {
+    display: none;
+  }
+
+  .report-container {
+    padding: 0;
+  }
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+  .columns {
+    flex-direction: column;
+  }
+}
