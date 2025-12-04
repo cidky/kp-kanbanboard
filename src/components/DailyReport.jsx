@@ -159,46 +159,47 @@ export default function DailyReport() {
             </div>
           </div>
 
-          {/* Tabel detail */}
-          <table className="report-table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Judul Tugas</th>
-                <th>Deskripsi</th>
-                <th>Prioritas</th>
-                <th>Status</th>
-                <th>Progress</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dailyTasks.map((t, idx) => (
-                <tr key={t.id}>
-                  <td>{idx + 1}</td>
-                  <td>{t.title}</td>
-                  <td>{t.note || "-"}</td>
-                  <td>{t.priority || "-"}</td>
-                  <td>{t.status || "-"}</td>
-                  <td>
-                    {(() => {
-                      const p = getProgressValue(t);
-                      return p === null ? "-" : p + "%";
-                    })()}
-                  </td>
+          {/* 🔹 WRAPPER TABEL – penting untuk HP */}
+          <div className="report-table-wrapper">
+            <table className="report-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Judul Tugas</th>
+                  <th>Deskripsi</th>
+                  <th>Prioritas</th>
+                  <th>Status</th>
+                  <th>Progress</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {dailyTasks.map((t, idx) => {
+                  const p = getProgressValue(t);
+                  return (
+                    <tr key={t.id}>
+                      <td>{idx + 1}</td>
+                      <td>{t.title}</td>
+                      <td>{t.note || "-"}</td>
+                      <td>{t.priority || "-"}</td>
+                      <td>{t.status || "-"}</td>
+                      <td>{p === null ? "-" : p + "%"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
+          {/* Tombol export di bawah kanan */}
           <div className="report-export">
             <button type="button" onClick={() => window.print()}>
               Cetak / Simpan PDF
             </button>
           </div>
-
-          {/* Catatan: kalau nanti sudah ada photoUrl, kita bisa tampilkan eviden foto di bawah sini */}
         </>
       )}
+
+      {/* Catatan: kalau nanti sudah ada photoUrl, kita bisa tampilkan eviden foto di bawah sini */}
     </div>
   );
 }

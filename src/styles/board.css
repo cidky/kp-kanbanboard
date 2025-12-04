@@ -381,10 +381,11 @@ progress-input input[type="range"] {
 .report-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
-  font-family: "Inter", sans-serif;
+  padding: 24px 16px 40px;
+  font-family: inherit;
   background: #ffffff;
   color: #111827;
+  box-sizing: border-box;
 }
 
 .report-header {
@@ -392,6 +393,19 @@ progress-input input[type="range"] {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap; /* 🔹 biar bisa turun ke bawah di HP */
+}
+
+.report-header h2 {
+  margin: 0 0 4px;
+}
+
+.report-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .report-controls .back-btn {
@@ -407,54 +421,29 @@ progress-input input[type="range"] {
   background: #d1d5db;
 }
 
-.report-header h2 {
-  margin: 0;
-}
-
-.report-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
 .report-controls .date-label {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
-  text-align: right;
+  gap: 8px;
+  font-size: 0.9rem;
 }
 
-.report-controls input[type="date"] {
+.report-controls .date-label input[type="date"] {
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #d1d5db;
 }
 
-.report-controls button {
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-.report-controls button:hover {
-  background: #1d4ed8;
-}
-
-/* Ringkasan kartu */
+/* Ringkasan di atas tabel */
 .report-summary {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* 🔹 supaya bisa turun jadi 2 baris di HP */
   gap: 12px;
   margin-bottom: 20px;
 }
 
 .summary-card {
-  flex: 1;
-  min-width: 140px;
+  flex: 1 1 150px;
   background: #f3f4f6;
   padding: 12px 14px;
   border-radius: 10px;
@@ -472,9 +461,15 @@ progress-input input[type="range"] {
   font-weight: 600;
 }
 
-/* Tabel laporan */
+/* 🔹 WRAPPER TABEL supaya di HP bisa di-scroll ke samping */
+.report-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .report-table {
   width: 100%;
+  min-width: 650px; /* kalau layar lebih kecil, user bisa geser */
   border-collapse: collapse;
   margin-top: 10px;
   font-size: 14px;
@@ -493,7 +488,7 @@ progress-input input[type="range"] {
   font-weight: 600;
 }
 
-/* Tombol export di bawah kanan */
+/* Tombol export bawah kanan */
 .report-export {
   display: flex;
   justify-content: flex-end;
@@ -511,17 +506,6 @@ progress-input input[type="range"] {
 
 .report-export button:hover {
   background: #1d4ed8;
-}
-
-@media print {
-  .board-header,
-  .report-controls {
-    display: none;
-  }
-
-  .report-container {
-    padding: 0;
-  }
 }
 
 /* ================================
