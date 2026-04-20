@@ -20,13 +20,16 @@ export default function DailyReport() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // cek user login
+  // Daftar team yang tersedia
+  const categories = ["DEFA", "IPSN", "Transport"];
+
+  // 1. Cek status login
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsub();
   }, []);
 
-  // ambil semua task user
+  // 2. Ambil data task dari Firestore
   useEffect(() => {
     if (!user) return;
 
@@ -45,7 +48,7 @@ export default function DailyReport() {
     return () => unsub();
   }, [user]);
 
-  // helper: ubah Timestamp ke string yyyy-mm-dd
+  // Helper: Konversi Firestore Timestamp ke format yyyy-mm-dd
   const getDateString = (t) => {
     if (!t || !t.seconds) return "";
     const d = new Date(t.seconds * 1000);
@@ -55,42 +58,43 @@ export default function DailyReport() {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  // task yang termasuk ke tanggal laporan
+  // Helper: Mendapatkan nilai progress numerik
+  const getProgressValue = (t) => {
+    if (t.progress === undefined || t.progress === null || t.progress === "") {
+      return (t.status || "").toLowerCase() === "done" ? 100 : 0;
+    }
+    const n = Number(t.progress);
+    return Number.isNaN(n) ? 0 : n;
+  };
+
+  // 3. Filter data berdasarkan tanggal terpilih
   const dailyTasks = tasks.filter((t) => {
     if (!t.createdAt) return false;
     return getDateString(t.createdAt) === selectedDate;
   });
 
-  // ringkasan
-  const total = dailyTasks.length;
-  const done = dailyTasks.filter((t) => (t.status || "todo") === "done").length;
-  const inprogress = dailyTasks.filter(
-    (t) => (t.status || "todo") === "inprogress"
-  ).length;
-  const todo = dailyTasks.filter((t) => (t.status || "todo") === "todo").length;
-  const getProgressValue = (t) => {
-    // belum ada progress sama sekali
-    if (t.progress === undefined || t.progress === null || t.progress === "") {
-      const status = (t.status || "").toLowerCase();
-      // kalau done tapi tidak ada progress -> anggap 100
-      if (status === "done") return 100;
-      // selain itu berarti belum diisi
-      return null;
-    }
+  // 4. Fungsi untuk menghitung statistik per team
+  const getSummaryByteam = (teamName) => {
+    const filtered = dailyTasks.filter(
+      (t) => (t.team || "").toUpperCase() === teamName.toUpperCase()
+    );
+    const total = filtered.length;
+    const done = filtered.filter(
+      (t) => (t.status || "").toLowerCase() === "done"
+    ).length;
+    const inprogress = filtered.filter(
+      (t) => (t.status || "").toLowerCase() === "inprogress"
+    ).length;
 
-    // ada progress, konversi ke number (bisa dari string atau number)
-    const n = Number(t.progress);
-    if (Number.isNaN(n)) return null;
-    return n;
+    const avg =
+      total > 0
+        ? Math.round(
+            filtered.reduce((sum, t) => sum + getProgressValue(t), 0) / total
+          )
+        : 0;
+
+    return { total, done, inprogress, avg };
   };
-
-  const avgProgress =
-    dailyTasks.length > 0
-      ? Math.round(
-          dailyTasks.reduce((sum, t) => sum + getProgressValue(t), 0) /
-            dailyTasks.length
-        )
-      : 0;
 
   if (!user) {
     return (
@@ -135,36 +139,43 @@ export default function DailyReport() {
         <p>Tidak ada kegiatan pada tanggal ini.</p>
       ) : (
         <>
-          {/* Ringkasan */}
-          <div className="report-summary">
-            <div className="summary-card">
-              <h4>Total Tugas</h4>
-              <p>{total}</p>
-            </div>
-            <div className="summary-card">
-              <h4>Selesai</h4>
-              <p>{done}</p>
-            </div>
-            <div className="summary-card">
-              <h4>Sedang Dikerjakan</h4>
-              <p>{inprogress}</p>
-            </div>
-            <div className="summary-card">
-              <h4>Belum Dikerjakan</h4>
-              <p>{todo}</p>
-            </div>
-            <div className="summary-card">
-              <h4>Rata-rata Progress</h4>
-              <p>{avgProgress}%</p>
-            </div>
+          {/* Ringkasan Terpisah Tiap team */}
+          <div className="report-summary-container">
+            {categories.map((div) => {
+              const stats = getSummaryByteam(div);
+              return (
+                <div key={div} className="summary-group">
+                  <h3>team {div}</h3>
+                  <div className="report-summary">
+                    <div className="summary-card">
+                      <h4>Total</h4>
+                      <p>{stats.total}</p>
+                    </div>
+                    <div className="summary-card">
+                      <h4>Selesai</h4>
+                      <p>{stats.done}</p>
+                    </div>
+                    <div className="summary-card">
+                      <h4>In Progress</h4>
+                      <p>{stats.inprogress}</p>
+                    </div>
+                    <div className="summary-card">
+                      <h4>Rata-rata Progress</h4>
+                      <p>{stats.avg}%</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          {/* 🔹 WRAPPER TABEL – penting untuk HP */}
+          {/* Tabel Detail Kegiatan */}
           <div className="report-table-wrapper">
             <table className="report-table">
               <thead>
                 <tr>
                   <th>No</th>
+                  <th>team</th>
                   <th>Judul Tugas</th>
                   <th>Deskripsi</th>
                   <th>Prioritas</th>
@@ -173,24 +184,39 @@ export default function DailyReport() {
                 </tr>
               </thead>
               <tbody>
-                {dailyTasks.map((t, idx) => {
-                  const p = getProgressValue(t);
-                  return (
-                    <tr key={t.id}>
-                      <td>{idx + 1}</td>
-                      <td>{t.title}</td>
-                      <td>{t.note || "-"}</td>
-                      <td>{t.priority || "-"}</td>
-                      <td>{t.status || "-"}</td>
-                      <td>{p === null ? "-" : p + "%"}</td>
-                    </tr>
-                  );
-                })}
+                {dailyTasks
+                  .slice() // Membuat copy array agar tidak mengubah state asli
+                  .sort((a, b) => {
+                    // Mengurutkan berdasarkan nama team secara alfabetis (A-Z)
+                    const teamA = (a.team || "").toLowerCase();
+                    const teamB = (b.team || "").toLowerCase();
+                    if (teamA < teamB) return -1;
+                    if (teamA > teamB) return 1;
+                    return 0;
+                  })
+                  .map((t, idx) => {
+                    const p = getProgressValue(t);
+                    const divClass = `badge-${(
+                      t.team || "default"
+                    ).toLowerCase()}`;
+                    return (
+                      <tr key={t.id}>
+                        <td>{idx + 1}</td>
+                        <td>
+                          <span className={divClass}>{t.team || "-"}</span>
+                        </td>
+                        <td>{t.title}</td>
+                        <td>{t.note || "-"}</td>
+                        <td>{t.priority || "-"}</td>
+                        <td>{t.status || "-"}</td>
+                        <td>{p}%</td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
 
-          {/* Tombol export di bawah kanan */}
           <div className="report-export">
             <button type="button" onClick={() => window.print()}>
               Cetak / Simpan PDF
@@ -198,8 +224,6 @@ export default function DailyReport() {
           </div>
         </>
       )}
-
-      {/* Catatan: kalau nanti sudah ada photoUrl, kita bisa tampilkan eviden foto di bawah sini */}
     </div>
   );
 }

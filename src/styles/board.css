@@ -550,3 +550,66 @@ progress-input input[type="range"] {
   font-weight: 600;
   text-align: center;
 }
+
+/* ================================
+   LAPORAN PER DIVISI (NEW)
+================================ */
+
+/* Kontainer utama untuk semua grup divisi */
+.report-summary-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Jarak antar grup divisi */
+  margin-bottom: 40px;
+}
+
+/* Judul tiap divisi */
+.summary-group h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+  padding-left: 4px;
+  border-left: 4px solid #2563eb; /* Aksen garis biru di samping judul divisi */
+}
+
+/* Menyesuaikan margin report-summary yang lama agar pas di dalam grup */
+.summary-group .report-summary {
+  margin-bottom: 0;
+}
+
+/* Badge untuk kolom divisi di dalam tabel */
+.badge-defa {
+  background: #dcfce7;
+  color: #166534;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-ipsn {
+  background: #fef9c3;
+  color: #854d0e;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-transport {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Pengaturan cetak: jangan sampai divisi terpotong antar halaman */
+@media print {
+  .summary-group {
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+  }
+}
