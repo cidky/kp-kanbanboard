@@ -217,6 +217,7 @@ export default function DailyReport() {
             </table>
           </div>
 
+
           <div className="report-export">
             <button type="button" onClick={() => window.print()}>
               Cetak / Simpan PDF
