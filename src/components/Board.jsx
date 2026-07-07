@@ -21,6 +21,16 @@ export default function Board() {
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState(null);
 
+  // 🔹 State baru untuk filter tanggal (format: YYYY-MM-DD, default hari ini)
+  const getTodayString = () => {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const [selectedDate, setSelectedDate] = useState(getTodayString());
+
   const navigate = useNavigate();
 
   // input fields
@@ -28,7 +38,7 @@ export default function Board() {
   const [note, setNote] = useState("");
   const [priority, setPriority] = useState("Low");
   const [progress, setProgress] = useState(0);
-  const [team, setTeam] = useState("defa"); // default DEFA
+  const [team, setTeam] = useState("defa");
 
   // EDIT states
   const [editTask, setEditTask] = useState(null);
@@ -43,32 +53,48 @@ export default function Board() {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       if (!u) {
-        navigate("/"); // atau "/login"
+        navigate("/");
       }
     });
     return () => unsub();
   }, [navigate]);
 
-  // Realtime Firestore
+  // Realtime Firestore dengan Filter Tanggal
   useEffect(() => {
     if (!user) return;
 
+    // 🔹 Buat range waktu berdasarkan tanggal yang dipilih (00:00:00 sampai 23:59:59)
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // 🔹 Modifikasi query untuk memfilter berdasarkan rentang tanggal createdAt
     const q = query(
       collection(db, "tasks"),
       where("uid", "==", user.uid),
+      where("createdAt", ">=", startOfDay),
+      where("createdAt", "<=", endOfDay),
       orderBy("createdAt", "asc")
     );
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTasks(data);
-    });
+    const unsub = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTasks(data);
+      },
+      (error) => {
+        console.error("Error fetching tasks: ", error);
+      }
+    );
 
     return () => unsub();
-  }, [user]);
+  }, [user, selectedDate]); // 🔹 useEffect akan berjalan ulang jika selectedDate berubah
 
   // Add Task
   const addTask = async () => {
@@ -116,7 +142,7 @@ export default function Board() {
     setEditTeam(t.team || "defa");
   };
 
-  // Drag & Drop: handle selesai drag
+  // Drag & Drop
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
 
@@ -125,22 +151,17 @@ export default function Board() {
     const [sourceTeam, sourceStatus] = source.droppableId.split("-");
     const [destTeam, destStatus] = destination.droppableId.split("-");
 
-    // tidak boleh pindah tim lewat drag
     if (sourceTeam !== destTeam) return;
-
     if (sourceStatus === destStatus) return;
 
     const ref = doc(db, "tasks", draggableId);
     await updateDoc(ref, { status: destStatus });
   };
 
-  // Ubah progress di task (inline, dari card)
+  // Ubah progress di task
   const updateProgress = async (task, newValue) => {
     const ref = doc(db, "tasks", task.id);
-
-    const updateData = {
-      progress: newValue,
-    };
+    const updateData = { progress: newValue };
 
     if (newValue === 100 && (task.status || "").toLowerCase() !== "done") {
       updateData.status = "done";
@@ -172,7 +193,6 @@ export default function Board() {
     setEditTask(null);
   };
 
-  // 🔹 konfigurasi tim & kolom (DI SINI, DI LUAR saveEdit)
   const teams = [
     { key: "defa", label: "DEFA" },
     { key: "ipsn", label: "IPSN" },
@@ -187,10 +207,9 @@ export default function Board() {
 
   const handleLogout = async () => {
     const yakin = window.confirm("Apakah Anda yakin ingin logout?");
-    if (!yakin) return; // ❌ batal logout
-
+    if (!yakin) return;
     await signOut(auth);
-    navigate("/"); // sesuaikan dengan route halaman login kamu ("/" atau "/login")
+    navigate("/");
   };
 
   return (
@@ -202,6 +221,29 @@ export default function Board() {
           <button onClick={handleLogout}>Logout</button>
           <button onClick={() => navigate("/report")}>Laporan Harian</button>
         </div>
+      </div>
+
+      {/* 🔹 FILTER TANGGAL */}
+      <div
+        className="filter-date-box"
+        style={{
+          margin: "15px 0",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <label style={{ fontWeight: "bold" }}>Pilih Tanggal Pengerjaan:</label>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          style={{
+            padding: "6px 12px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        />
       </div>
 
       {/* Create Task Section */}
