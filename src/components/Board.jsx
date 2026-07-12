@@ -46,7 +46,7 @@ export default function Board() {
   const [editNote, setEditNote] = useState("");
   const [editPriority, setEditPriority] = useState("Low");
   const [editProgress, setEditProgress] = useState(0);
-  const [editTeam, setEditTeam] = useState("defa");
+  const [editTeam, setEditTeam] = useState("DEFA");
 
   // Check user login
   useEffect(() => {
@@ -118,7 +118,7 @@ export default function Board() {
     setNote("");
     setPriority("Low");
     setProgress(0);
-    setTeam("defa");
+    setTeam("DEFA");
   };
 
   // Change Status
@@ -139,7 +139,7 @@ export default function Board() {
     setEditNote(t.note || "");
     setEditPriority(t.priority || "Low");
     setEditProgress(t.progress || 0);
-    setEditTeam(t.team || "defa");
+    setEditTeam(t.team || "DEFA");
   };
 
   // Drag & Drop
